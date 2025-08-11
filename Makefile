@@ -1,13 +1,18 @@
+.PHONY: setup dev run test
+
 setup:
-	@echo "راه‌اندازی پروژه..."
+	@echo "نصب وابستگی‌ها..."
 	poetry install
+	@cp -n .env.example .env || echo ".env وجود دارد."
 
 dev:
-	@echo "شروع محیط توسعه..."
-	poetry run python -m app.main
+	@echo "اجرای سرور FastAPI..."
+	uvicorn apps.api:app --reload --port 8000
+
+run:
+	@echo "اجرای داشبورد..."
+	python apps/dashboard.py
 
 test:
-	@echo "اجرای تست‌ها..."
-	poetry run pytest
-
-.PHONY: setup dev test
+	@echo "اجرای تست Smoke..."
+	pytest tests/test_smoke.py

@@ -1,15 +1,18 @@
 [tool.poetry]
-name = "omni-arb-template"
+name = "omni-arb"
 version = "0.1.0"
-description = "قالب پروژه Omni-Arb برای اتصال ۴ ریپوی خارجی به صورت submodule"
+description = "پروژه ترکیبی برای یکپارچه‌سازی FinGPT، FinRL و کانکتور MEXC فیوچرز"
 authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-repoA = { path = "external/repoA", develop = true }
-repoB = { path = "external/repoB", develop = true }
-repoC = { path = "external/repoC", develop = true }
-repoD = { path = "external/repoD", develop = true }
+FinGPT = { path = "external/FinGPT", develop = true }
+FinRL = { path = "external/FinRL", develop = true }
+fastapi = "^0.95.0"
+uvicorn = "^0.18.0"
+pydantic = "^1.10.0"
+httpx = "^0.24.0"
+aiohttp = "^3.8.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -1,44 +1,37 @@
 """
-تست Smoke برای بررسی عملکرد import پکیج‌ها و اجرای تابع نمونه هر ریپوزیتوری.
+تست Smoke برای بررسی عملکرد اولیه سیستم.
 
-در صورتی که در هر پکیج تابع sample_function وجود نداشته باشد، با استفاده از mock یک مقدار نمونه بازگردانده می‌شود.
+این تست شامل:
+- بررسی import ماژول‌های اصلی (signals, policy, exec)
+- اجرای توابع نمونه جهت اطمینان از بارگذاری صحیح ماژول‌ها
+
+در صورت عدم وجود توابع واقعی، استفاده از mock انجام می‌شود.
 """
-
 import unittest
 
 try:
-    from repoA import sample_function as sample_a
+    from signals import sentiment_fingpt
 except ImportError:
-    def sample_a():
-        return "repoA"
+    sentiment_fingpt = None
 
 try:
-    from repoB import sample_function as sample_b
+    from policy import rl_agent
 except ImportError:
-    def sample_b():
-        return "repoB"
+    rl_agent = None
 
 try:
-    from repoC import sample_function as sample_c
+    from exec import engine
 except ImportError:
-    def sample_c():
-        return "repoC"
-
-try:
-    from repoD import sample_function as sample_d
-except ImportError:
-    def sample_d():
-        return "repoD"
+    engine = None
 
 class SmokeTest(unittest.TestCase):
-    """کلاس تست Smoke برای بررسی پکیج‌ها"""
+    """کلاس تست Smoke جهت بررسی عملکرد پایه سیستم"""
 
     def test_imports(self):
-        """تست اجرای تابع نمونه در هر پکیج"""
-        self.assertIn("repoA", sample_a())
-        self.assertIn("repoB", sample_b())
-        self.assertIn("repoC", sample_c())
-        self.assertIn("repoD", sample_d())
+        """تست import بخش‌های اصلی پروژه"""
+        self.assertIsNotNone(sentiment_fingpt, "ماژول sentiment_fingpt باید موجود باشد")
+        self.assertIsNotNone(rl_agent, "ماژول rl_agent باید موجود باشد")
+        self.assertIsNotNone(engine, "ماژول engine باید موجود باشد")
 
 if __name__ == "__main__":
     unittest.main()

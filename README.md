@@ -1,33 +1,70 @@
-# Omni-Arb Template
+# پروژه Omni-Arb ترکیبی
 
-این ریپو به عنوان یک قالب پروژه برای اتصال ۴ ریپوی خارجی به صورت submodule تنظیم شده است.
+این ریپو یک اسکلت پروژه ترکیبی برای یکپارچه‌سازی FinGPT، FinRL و کانکتور MEXC فیوچرز می‌باشد.
 
 ## ساختار پوشه‌ها
 
-omni-arb-template/           # ✅ ریپوی Template
-  external/
-    repoA/                   # ← submodule
-    repoB/
-    repoC/
-    repoD/
-  app/                       # کد اصلی برنامه
-  tests/                     # تست‌های پروژه
-  .devcontainer/
-    devcontainer.json
-    Dockerfile
-  .github/workflows/
-    init.yml
-    sync-submodules.yml
-  pyproject.toml             # تنظیمات Poetry (یا requirements.txt)
-  Makefile
-  README.md
+```
+omni-arb/
+├── external/                   # افزودن FinGPT و FinRL به عنوان submodule
+│   ├── FinGPT/                 
+│   └── FinRL/                  
+├── connectors/
+│   └── mexc_futures/           # کانکتور MEXC فیوچرز (REST, WS, Auth)
+├── signals/
+│   ├── base.py                 # اینترفیس سیگنال
+│   └── sentiment_fingpt.py     # آداپتور FinGPT برای تولید سیگنال
+├── policy/
+│   ├── base.py                 # اینترفیس پالیسی
+│   ├── rl_agent.py             # پیاده‌سازی RL Agent
+│   └── rules.py                # پالیسی مبتنی بر قوانین ساده
+├── exec/
+│   ├── base.py                 # اینترفیس اجرایی
+│   ├── engine.py               # ماژول اجرای سفارش (dry-run اولیه)
+│   ├── router.py               # مسیردهی سفارش‌ها
+│   └── risk.py                 # مدیریت ریسک و محاسبه اندازه سفارش
+├── apps/
+│   ├── api.py                  # API پروژه با FastAPI
+│   └── dashboard.py            # داشبورد برای نمایش اطلاعات
+├── configs/
+│   └── settings.example.yaml   # فایل نمونه تنظیمات پروژه
+├── tests/
+│   └── test_smoke.py           # تست Smoke برای بررسی عملکرد اولیه
+├── Makefile                    # دستورات ساخت و اجرا
+├── pyproject.toml              # تنظیمات Poetry برای مدیریت وابستگی‌ها
+└── README.md                   # این فایل راهنما
+```
 
 ## راهنمای استفاده
 
-1. در صفحه ریپو، روی دکمه "Use this template" کلیک کرده و ریپوی جدید ایجاد کنید.
-2. بعد از کلون کردن پروژه، دستور زیر را برای به‌روز کردن submoduleها اجرا کنید:
-   
+1. کلون کردن مخزن:
+   ```
+   git clone <repository_url>
+   cd omni-arb
    git submodule update --init --recursive
+   ```
+   جهت اضافه کردن submoduleها:
+   ```
+   git submodule add https://github.com/AI4Finance-Foundation/FinGPT external/FinGPT
+   git submodule add https://github.com/AI4Finance-Foundation/FinRL external/FinRL
+   ```
 
-3. سپس با اجرای دستور `make setup`، وابستگی‌ها نصب خواهند شد.
-4. از Makefile برای اجرای پروژه (هدف dev) و تست‌ها (هدف test) استفاده کنید.
+2. نصب وابستگی‌ها:
+   ```
+   poetry install
+   ```
+
+3. اجرای API:
+   ```
+   uvicorn apps.api:app --reload --port 8000
+   ```
+
+4. اجرای داشبورد:
+   ```
+   python apps/dashboard.py
+   ```
+
+5. اجرای تست Smoke:
+   ```
+   pytest tests/test_smoke.py
+   ```
