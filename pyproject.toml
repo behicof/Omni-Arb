@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "omni-arb-template"
+version = "0.1.0"
+description = "قالب پروژه Omni-Arb برای اتصال ۴ ریپوی خارجی به صورت submodule"
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+repoA = { path = "external/repoA", develop = true }
+repoB = { path = "external/repoB", develop = true }
+repoC = { path = "external/repoC", develop = true }
+repoD = { path = "external/repoD", develop = true }
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
