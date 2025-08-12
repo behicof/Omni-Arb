@@ -1,0 +1,3 @@
+"""Executor interface stub."""
+class Executor:
+    ...

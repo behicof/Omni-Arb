@@ -1,0 +1,3 @@
+"""Signal interface stub."""
+class Signal:
+    ...

@@ -1,0 +1,4 @@
+net_edge_bps: 5
+max_leg_latency_ms: 250
+slippage_bps: 1
+min_depth_notional: 100

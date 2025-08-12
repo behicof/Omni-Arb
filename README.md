@@ -1,70 +1,36 @@
-# پروژه Omni-Arb ترکیبی
+# Omni-Arb Funding & Basis Engine
 
-این ریپو یک اسکلت پروژه ترکیبی برای یکپارچه‌سازی FinGPT، FinRL و کانکتور MEXC فیوچرز می‌باشد.
+## 1. Overview
+Arbitrage engine for funding-rate and cash-and-carry spreads across **Binance USDⓈ-M** futures and **OKX perpetuals**.
 
-## ساختار پوشه‌ها
+## 2. Execution
+Orders are sent through `order.py` which supports `IOC`, `FOK`, `GTC` and `GTX (Post-Only)`.
+- Dry‑run on Binance uses `POST /fapi/v1/order/test` when `LIVE=0`.
+- Live trading switches to `POST /fapi/v1/order`.
+- OKX demo trading adds header `x-simulated-trading: 1` and removes it for live.
+- Post‑only semantics reject orders that would cross the book.
 
+## 3. Market Data
+- **WebSocket:** `ws_binance_mark.py` subscribes to `<symbol>@markPrice@1s`.
+- **REST:** `poll_funding.py` queries `GET /fapi/v1/fundingRate` and `GET /fapi/v1/fundingInfo`.
+
+## 4. Risk & Guards
+- Validate `LOT_SIZE` and `MIN_NOTIONAL` via `exchangeInfo` before placing orders.
+- Configurable thresholds in `configs/thresholds.yml` and symbol caps in `configs/risk.yml` cover latency, slippage and depth limits.
+
+## 5. Install / Run / Test
+```bash
+poetry install
+python ws_binance_mark.py BTCUSDT
+python poll_funding.py BTCUSDT
+pytest -q
 ```
-omni-arb/
-├── external/                   # افزودن FinGPT و FinRL به عنوان submodule
-│   ├── FinGPT/                 
-│   └── FinRL/                  
-├── connectors/
-│   └── mexc_futures/           # کانکتور MEXC فیوچرز (REST, WS, Auth)
-├── signals/
-│   ├── base.py                 # اینترفیس سیگنال
-│   └── sentiment_fingpt.py     # آداپتور FinGPT برای تولید سیگنال
-├── policy/
-│   ├── base.py                 # اینترفیس پالیسی
-│   ├── rl_agent.py             # پیاده‌سازی RL Agent
-│   └── rules.py                # پالیسی مبتنی بر قوانین ساده
-├── exec/
-│   ├── base.py                 # اینترفیس اجرایی
-│   ├── engine.py               # ماژول اجرای سفارش (dry-run اولیه)
-│   ├── router.py               # مسیردهی سفارش‌ها
-│   └── risk.py                 # مدیریت ریسک و محاسبه اندازه سفارش
-├── apps/
-│   ├── api.py                  # API پروژه با FastAPI
-│   └── dashboard.py            # داشبورد برای نمایش اطلاعات
-├── configs/
-│   └── settings.example.yaml   # فایل نمونه تنظیمات پروژه
-├── tests/
-│   └── test_smoke.py           # تست Smoke برای بررسی عملکرد اولیه
-├── Makefile                    # دستورات ساخت و اجرا
-├── pyproject.toml              # تنظیمات Poetry برای مدیریت وابستگی‌ها
-└── README.md                   # این فایل راهنما
-```
+Use `.env.example` to configure keys and `LIVE` flag.
 
-## راهنمای استفاده
-
-1. کلون کردن مخزن:
-   ```
-   git clone <repository_url>
-   cd omni-arb
-   git submodule update --init --recursive
-   ```
-   جهت اضافه کردن submoduleها:
-   ```
-   git submodule add https://github.com/AI4Finance-Foundation/FinGPT external/FinGPT
-   git submodule add https://github.com/AI4Finance-Foundation/FinRL external/FinRL
-   ```
-
-2. نصب وابستگی‌ها:
-   ```
-   poetry install
-   ```
-
-3. اجرای API:
-   ```
-   uvicorn apps.api:app --reload --port 8000
-   ```
-
-4. اجرای داشبورد:
-   ```
-   python apps/dashboard.py
-   ```
-
-5. اجرای تست Smoke:
-   ```
-   pytest tests/test_smoke.py
-   ```
+## 6. References
+- [Mark Price Stream – Binance Developer Center](https://developers.binance.com/docs/derivatives/usds-margined-futures/websocket-market-streams/Mark-Price-Stream)
+- [Get Funding Rate History – Binance Developer Center](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-History)
+- [Funding Info – Binance Developer Center](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Funding-Rate)
+- [Exchange Info – Binance Developer Center](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Exchange-Information)
+- [OKX API Guide](https://www.okx.com/docs-v5/en/)
+- [go-binance futures package](https://pkg.go.dev/github.com/adshao/go-binance/futures)
