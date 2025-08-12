@@ -1,4 +1,9 @@
-"""Binance Futures mark price WebSocket client."""
+"""Binance Futures mark price client.
+
+By default this module connects to Binance's WebSocket feed.  When the
+environment variable ``WS_DISABLED`` is set to ``"1"`` it instead falls back to
+REST polling via :mod:`feeds.rest_mark_funding`.
+"""
 import asyncio
 import csv
 import datetime as dt
@@ -39,6 +44,13 @@ async def subscribe_mark_price(symbol: Optional[str] = None) -> None:
     Args:
         symbol: Specific symbol to subscribe to. If omitted, subscribes to all symbols.
     """
+    if os.getenv("WS_DISABLED") == "1":
+        from feeds.rest_mark_funding import poll_mark_funding
+
+        symbols = [symbol] if symbol else ["BTCUSDT"]
+        await poll_mark_funding(symbols)
+        return
+
     stream = "!markPrice@arr@1s" if symbol is None else f"{symbol.lower()}@markPrice@1s"
     url = f"{BINANCE_WS_URL}/{stream}"
     backoff = 1
@@ -60,4 +72,13 @@ if __name__ == "__main__":  # pragma: no cover
     parser = argparse.ArgumentParser(description="Binance mark price subscriber")
     parser.add_argument("--symbol", help="Symbol to subscribe to", default=None)
     args = parser.parse_args()
-    asyncio.run(subscribe_mark_price(args.symbol))
+
+    # ``--symbol`` may contain a comma separated list.  When WS is disabled the
+    # REST poller can handle multiple symbols.
+    if os.getenv("WS_DISABLED") == "1" and args.symbol:
+        from feeds.rest_mark_funding import poll_mark_funding
+
+        symbols = [s.strip() for s in args.symbol.split(",") if s.strip()]
+        asyncio.run(poll_mark_funding(symbols))
+    else:
+        asyncio.run(subscribe_mark_price(args.symbol))
