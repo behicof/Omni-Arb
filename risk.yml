@@ -1,0 +1,4 @@
+max_notional_per_trade: 10000
+per_symbol_caps:
+  BTCUSDT: 5000
+  ETHUSDT: 3000
