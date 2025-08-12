@@ -27,7 +27,16 @@ def validate_order_filters(symbol: str, quantity: float, price: float, exchange:
         symbol_info = info.get("symbols", [])[0]
     else:
         # ساختار پاسخ OKX متفاوت است؛ برای سادگی از اولین رکورد استفاده می‌کنیم
-        symbol_info = info.get("data", [])[0]
+        symbols = info.get("symbols", [])
+        if not symbols:
+            raise ValueError(f"Symbol '{symbol}' not found in exchange info response.")
+        symbol_info = symbols[0]
+    else:
+        # ساختار پاسخ OKX متفاوت است؛ برای سادگی از اولین رکورد استفاده می‌کنیم
+        data = info.get("data", [])
+        if not data:
+            raise ValueError(f"Symbol '{symbol}' not found in exchange info response.")
+        symbol_info = data[0]
     filters = {f["filterType"]: f for f in symbol_info.get("filters", [])}
 
     lot = filters.get("LOT_SIZE", {})
