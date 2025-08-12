@@ -16,7 +16,6 @@ class GuardChecker:
 
     @classmethod
     def from_yaml(cls, path: str) -> "GuardChecker":
-        with open(path, "r", encoding="utf-8") as fh:
         try:
             with open(path, "r", encoding="utf-8") as fh:
                 data = yaml.safe_load(fh) or {}
