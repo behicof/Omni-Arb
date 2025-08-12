@@ -10,17 +10,17 @@
 import unittest
 
 try:
-    from signals import sentiment_fingpt
+    import sentiment_fingpt
 except ImportError:
     sentiment_fingpt = None
 
 try:
-    from policy import rl_agent
+    import rl_agent  # type: ignore
 except ImportError:
     rl_agent = None
 
 try:
-    from exec import engine
+    import engine
 except ImportError:
     engine = None
 

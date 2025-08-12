@@ -3,7 +3,6 @@
 """
 import asyncio
 from typing import Dict, Any
-from .base import Executor
 
 class OrderExecutor:
     """
