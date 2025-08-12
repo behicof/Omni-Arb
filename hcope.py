@@ -56,7 +56,17 @@ def hcope_gate(
         confidence_level: Confidence level for the bound (default 95%).
 
     Returns:
-        ``True`` if the policy passes the gate, ``False`` otherwise.
+        ``True`` if the policy passes the gate, ``False`` otherwise. The
+        function also prints a short message indicating whether the policy
+        passed or failed and, in the failure case, the computed LCB.
     """
-    lcb_sharpe = evaluate_policy_performance(sharpe_ratio, sharpe_std, confidence_level)
-    return lcb_sharpe >= threshold
+    lcb_sharpe = evaluate_policy_performance(
+        sharpe_ratio, sharpe_std, confidence_level
+    )
+    if lcb_sharpe >= threshold:
+        print("Policy passed HCOPE gate! Proceeding with execution.")
+        return True
+    print(
+        f"Policy failed HCOPE gate. LCB: {lcb_sharpe} < threshold: {threshold}"
+    )
+    return False
