@@ -1,70 +1,34 @@
-# پروژه Omni-Arb ترکیبی
+# Omni-Arb
 
-این ریپو یک اسکلت پروژه ترکیبی برای یکپارچه‌سازی FinGPT، FinRL و کانکتور MEXC فیوچرز می‌باشد.
+Utilities for funding & basis arbitrage on Binance and OKX.
 
-## ساختار پوشه‌ها
+## Features
+- **Order wrapper** toggles dry‑run (`POST /fapi/v1/order/test`) vs live (`POST /fapi/v1/order`),
+  supporting `timeInForce` values `IOC`, `FOK`, `GTC` and `GTX` (Post‑Only).
+- **WebSocket mark price feed** subscribes to `<symbol>@markPrice@1s` and persists
+  `ts`, `markPrice`, `fundingRate`, `nextFunding` to CSV and Parquet.
+- **Funding poller** queries `GET /fapi/v1/fundingRate` and
+  `GET /fapi/v1/fundingInfo` then computes `NetEdge_bps`.
+- **OKX demo/live switcher** adds header `x-simulated-trading: 1` for demo
+  trading and omits it for live orders.
+- Sample configs in `configs/` and environment variables in `.env.example`.
 
-```
-omni-arb/
-├── external/                   # افزودن FinGPT و FinRL به عنوان submodule
-│   ├── FinGPT/                 
-│   └── FinRL/                  
-├── connectors/
-│   └── mexc_futures/           # کانکتور MEXC فیوچرز (REST, WS, Auth)
-├── signals/
-│   ├── base.py                 # اینترفیس سیگنال
-│   └── sentiment_fingpt.py     # آداپتور FinGPT برای تولید سیگنال
-├── policy/
-│   ├── base.py                 # اینترفیس پالیسی
-│   ├── rl_agent.py             # پیاده‌سازی RL Agent
-│   └── rules.py                # پالیسی مبتنی بر قوانین ساده
-├── exec/
-│   ├── base.py                 # اینترفیس اجرایی
-│   ├── engine.py               # ماژول اجرای سفارش (dry-run اولیه)
-│   ├── router.py               # مسیردهی سفارش‌ها
-│   └── risk.py                 # مدیریت ریسک و محاسبه اندازه سفارش
-├── apps/
-│   ├── api.py                  # API پروژه با FastAPI
-│   └── dashboard.py            # داشبورد برای نمایش اطلاعات
-├── configs/
-│   └── settings.example.yaml   # فایل نمونه تنظیمات پروژه
-├── tests/
-│   └── test_smoke.py           # تست Smoke برای بررسی عملکرد اولیه
-├── Makefile                    # دستورات ساخت و اجرا
-├── pyproject.toml              # تنظیمات Poetry برای مدیریت وابستگی‌ها
-└── README.md                   # این فایل راهنما
+## Quick Start
+```bash
+poetry install
+cp .env.example .env
+python -m pytest
 ```
 
-## راهنمای استفاده
+## Documentation Links
+- [Binance Mark‑Price WebSocket 1s](https://binance-docs.github.io/apidocs/futures/en/#mark-price-stream-for-all-market)
+- [Binance Funding Rate History](https://binance-docs.github.io/apidocs/futures/en/#get-funding-rate-history)
+- [Binance Funding Info](https://binance-docs.github.io/apidocs/futures/en/#get-funding-info)
+- [Binance New Order (timeInForce incl. GTX)](https://binance-docs.github.io/apidocs/futures/en/#new-order-trade)
+- [OKX Simulated Trading Header](https://www.okx.com/docs-v5/en/#rest-api-simulated-trading-introduction)
 
-1. کلون کردن مخزن:
-   ```
-   git clone <repository_url>
-   cd omni-arb
-   git submodule update --init --recursive
-   ```
-   جهت اضافه کردن submoduleها:
-   ```
-   git submodule add https://github.com/AI4Finance-Foundation/FinGPT external/FinGPT
-   git submodule add https://github.com/AI4Finance-Foundation/FinRL external/FinRL
-   ```
-
-2. نصب وابستگی‌ها:
-   ```
-   poetry install
-   ```
-
-3. اجرای API:
-   ```
-   uvicorn apps.api:app --reload --port 8000
-   ```
-
-4. اجرای داشبورد:
-   ```
-   python apps/dashboard.py
-   ```
-
-5. اجرای تست Smoke:
-   ```
-   pytest tests/test_smoke.py
-   ```
+## Acceptance Checklist
+- [x] WebSocket snapshot validated
+- [x] Funding pollers validated
+- [x] Order wrapper (IOC/GTX) validated
+- [x] Dry‑run `/order/test` validated
