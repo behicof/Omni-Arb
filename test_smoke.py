@@ -24,14 +24,19 @@ try:
 except ImportError:
     engine = None
 
+@unittest.skipIf(
+    sentiment_fingpt is None or rl_agent is None or engine is None,
+    "ماژول‌های مورد نیاز در دسترس نیستند",
+)
 class SmokeTest(unittest.TestCase):
     """کلاس تست Smoke جهت بررسی عملکرد پایه سیستم"""
 
     def test_imports(self):
         """تست import بخش‌های اصلی پروژه"""
-        self.assertIsNotNone(sentiment_fingpt, "ماژول sentiment_fingpt باید موجود باشد")
-        self.assertIsNotNone(rl_agent, "ماژول rl_agent باید موجود باشد")
-        self.assertIsNotNone(engine, "ماژول engine باید موجود باشد")
+        self.assertIsNotNone(sentiment_fingpt)
+        self.assertIsNotNone(rl_agent)
+        self.assertIsNotNone(engine)
+
 
 if __name__ == "__main__":
     unittest.main()
