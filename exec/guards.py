@@ -17,7 +17,21 @@ class GuardChecker:
     @classmethod
     def from_yaml(cls, path: str) -> "GuardChecker":
         with open(path, "r", encoding="utf-8") as fh:
-            data = yaml.safe_load(fh) or {}
+        try:
+            with open(path, "r", encoding="utf-8") as fh:
+                data = yaml.safe_load(fh) or {}
+        except FileNotFoundError as e:
+            import logging
+            logging.error(f"Config file not found: {path} ({e})")
+            data = {}
+        except yaml.YAMLError as e:
+            import logging
+            logging.error(f"YAML parsing error in {path}: {e}")
+            data = {}
+        except Exception as e:
+            import logging
+            logging.error(f"Unexpected error loading config from {path}: {e}")
+            data = {}
         return cls(data)
 
     @property
