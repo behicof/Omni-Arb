@@ -69,7 +69,6 @@ class PurgedKFold:
             # Compute embargo window after the test set
             if embargo > 0.0:
                 # Embargo window is a fraction of the total time range
-                total_time = starts[-1] - starts[0]
         for test_indices in test_folds:
             test_start_idx = test_indices[0]
             test_end_idx = test_indices[-1]
