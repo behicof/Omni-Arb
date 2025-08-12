@@ -1,0 +1,8 @@
+stages:
+  optimize:
+    cmd: python tuning.py
+    deps:
+      - tuning.py
+      - conf/tune.yaml
+    outs:
+      - docs/experiments

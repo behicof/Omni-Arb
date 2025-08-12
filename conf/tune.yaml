@@ -1,0 +1,17 @@
+study_name: omni-arb-optimization
+optimizer: optuna  # or ray
+n_trials: 10
+constraint:
+  max_dd: 0.2
+search_space:
+  lr:
+    low: 0.0001
+    high: 0.1
+  gamma:
+    low: 0.9
+    high: 0.999
+mlflow:
+  uri: file:./mlruns
+  experiment: tuning
+wandb:
+  project: omni-arb
