@@ -3,17 +3,15 @@
 """
 import asyncio
 from typing import Dict, Any
-from .base import Executor
+
 
 class OrderExecutor:
-    """
-    کلاس اجرای سفارش‌ها (به صورت dry-run برای تست اولیه).
-    """
+    """کلاس اجرای سفارش‌ها (به صورت dry-run برای تست اولیه)."""
 
     async def place(self, action: Dict[str, Any]) -> Dict[str, Any]:
         """
         شبیه‌سازی ارسال سفارش.
-        
+
         :param action: دیکشنری شامل اطلاعات سفارش
         :return: دیکشنری نتیجه سفارش
         """
