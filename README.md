@@ -31,7 +31,7 @@
 poetry install
 uvicorn apps.api:app --reload --port 8000
 python apps/dashboard.py
-pytest test_smoke.py
+pytest tests/test_smoke.py
 ```
 
 ## مراجع
