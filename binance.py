@@ -93,7 +93,11 @@ def poll_funding_info(symbols: Iterable[str], interval: float = 1.0) -> None:
                 params={"symbol": symbol, "limit": 1},
                 timeout=10,
             ).json()
-            if not rate_resp:
+            # Ensure rate_resp is a list with at least one element
+            if not isinstance(rate_resp, list) or len(rate_resp) == 0:
+                # Optionally log error responses if rate_resp is a dict
+                if isinstance(rate_resp, dict) and "msg" in rate_resp:
+                    print(f"Error response for {symbol}: {rate_resp.get('msg')}")
                 continue
             rate = float(rate_resp[0]["fundingRate"])
 
