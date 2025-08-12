@@ -46,7 +46,7 @@ class FundingRecord:
         common calculation for perpetual swap exchanges.
         """
 
-        return self.position * self.price * self.rate
+        return -self.position * self.price * self.rate
 
 
 def windowed_funding_pnl(
