@@ -15,7 +15,6 @@ def _format_currency(value: float) -> str:
     """Return ``value`` formatted as a currency string."""
 
     return f"$ {value:,.2f}"
-
 def _format_currency(value: float, currency_symbol: str = "$") -> str:
     """Return ``value`` formatted as a currency string.
 
