@@ -20,7 +20,17 @@
 - **Market Data:** WebSocket مارک‌پرایس/فاندینگ + Poll اندپوینت‌های Funding/Info.  \\
 - **NLP/RL Hooks (اختیاری):** FinGPT برای گزارش زبانی؛ FinRobot/FinRL برای پژوهش.
 
-**مراجع:** Binance Funding History/Info، Mark-Price Stream، Position Mode؛ OKX Funding Mechanism و Demo Header.  \\
+- **Core:**
+  \[
+  \text{NetEdge}_{bps}=\text{Funding}_{recv}-\text{Fees}-\text{Borrow/Carry}-\text{Slippage}
+  \]
+  آستانه‌ها/گاردها از `configs/thresholds.yml` خوانده می‌شوند.
+- **Execution:** سفارش‌های Limit با **IOC** (اتمیک) یا **GTX/Post-Only** (میکر واقعی). Dry-Run بایننس از مسیر **`POST /fapi/v1/order/test`** و OKX با هدر **`x-simulated-trading: 1`**.
+- **Risk & Guards:** گارد تأخیر لِگ، اسلیپیج، عمق، سقف ناتیونال، و اعمال فیلترهای LOT/NOTIONAL.
+- **Market Data:** WebSocket مارک‌پرایس/فاندینگ + Poll اندپوینت‌های Funding/Info.
+- **NLP/RL Hooks (اختیاری):** FinGPT برای گزارش زبانی؛ FinRobot/FinRL برای پژوهش.
+
+**مراجع:** Binance Funding History/Info، Mark-Price Stream، Position Mode؛ OKX Funding Mechanism و Demo Header.
 (به منابع انتهای README مراجعه کنید.)
 
 ---
