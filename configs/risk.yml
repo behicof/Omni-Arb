@@ -1,0 +1,9 @@
+limits:
+  max_notional_per_trade: 1000
+  max_open_trades: 3
+  per_symbol_max_notional:
+    BTCUSDT: 2000
+    ETHUSDT: 1500
+margins:
+  binance_usdm_buffer: 0.05
+  okx_unified_buffer: 0.05
