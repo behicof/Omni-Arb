@@ -94,7 +94,7 @@ class PurgedKFold:
                 if start_i <= test_end and end_i >= test_start:
                     continue
                 # Purge observations whose label intervals overlap embargo window
-                if embargo > 0.0 and start_i <= embargo_end and end_i >= embargo_start:
+                if embargo_start is not None and embargo_end is not None and start_i <= embargo_end and end_i >= embargo_start:
                     continue
                 train_indices.append(idx)
 
