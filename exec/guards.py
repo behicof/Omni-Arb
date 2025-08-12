@@ -42,4 +42,8 @@ class GuardChecker:
         """ثبت لاگ معامله."""
         entry = {"timestamp": _dt.datetime.utcnow().isoformat(), **trade}
         with open("trade_audit.log", "a", encoding="utf-8") as fh:
-            fh.write(json.dumps(entry) + "\n")
+        try:
+            with open(self.log_path, "a", encoding="utf-8") as fh:
+                fh.write(json.dumps(entry) + "\n")
+        except (OSError, IOError) as e:
+            print(f"Failed to write trade log to {self.log_path}: {e}")
