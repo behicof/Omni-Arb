@@ -47,6 +47,8 @@ def validate_order_filters(symbol: str, quantity: float, price: float, exchange:
     min_notional = float(filters.get("MIN_NOTIONAL", {}).get("minNotional", 0))
     notional = quantity * price
 
+    if step_size == 0:
+        raise ValueError("Invalid LOT_SIZE filter: step_size cannot be zero")
     qty_ok = min_qty <= quantity <= max_qty and (quantity / step_size).is_integer()
     notional_ok = notional >= min_notional
     if not (qty_ok and notional_ok):
