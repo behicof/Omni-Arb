@@ -1,0 +1,6 @@
+max_position_usd: 10000
+per_symbol:
+  BTCUSDT:
+    max_usd: 5000
+  ETHUSDT:
+    max_usd: 3000
