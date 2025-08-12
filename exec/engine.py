@@ -8,7 +8,16 @@ from .guards import GuardChecker
 class OrderExecutor:
     """کلاس اجرای سفارش‌ها (به صورت dry-run برای تست اولیه)."""
 
-    def __init__(self, config_path: str = "configs/risk.yml") -> None:
+import os
+from .guards import GuardChecker
+
+
+class OrderExecutor:
+    """کلاس اجرای سفارش‌ها (به صورت dry-run برای تست اولیه)."""
+
+    def __init__(self, config_path: str = None) -> None:
+        if config_path is None:
+            config_path = os.environ.get("RISK_CONFIG_PATH", "configs/risk.yml")
         self.guard = GuardChecker.from_yaml(config_path)
 
     async def place(self, action: Dict[str, Any]) -> Dict[str, Any]:
