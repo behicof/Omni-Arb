@@ -7,7 +7,7 @@
 ## اجرا
 - **TIF:** `IOC` | `FOK` | `GTC` | `GTX` (Post-Only).
 - شبه‌کد `GTX = Post-Only`:
-  ```pseudo
+  ```pseudocode
   if tif == "GTX":
       order.post_only = true
       reject_if_taker = true
