@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  omni-arb:
+    build: ..
+    environment:
+      - CONFIG_DIR=/app/deploy/config
+    command: python -c "print('omni-arb placeholder')"

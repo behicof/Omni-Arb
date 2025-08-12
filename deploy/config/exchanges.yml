@@ -1,0 +1,7 @@
+binance:
+  api_key: YOUR_BINANCE_KEY
+  api_secret: YOUR_BINANCE_SECRET
+okx:
+  api_key: YOUR_OKX_KEY
+  api_secret: YOUR_OKX_SECRET
+  passphrase: YOUR_OKX_PASSPHRASE
