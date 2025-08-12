@@ -66,7 +66,6 @@ class PurgedKFold:
                 start_i = starts[idx]
                 end_i = t1[idx]
                 if start_i <= test_end and end_i >= test_start:
-                    # Purge observations whose label intervals overlap test set.
             # Compute embargo window after the test set
             if embargo > 0.0:
                 # Embargo window is a fraction of the total time range
