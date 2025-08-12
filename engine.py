@@ -31,7 +31,7 @@ def main() -> None:
     ws_disabled = args.ws_disabled or os.getenv("WS_DISABLED") == "1"
 
     if ws_disabled:
-        LOGGER.warning("WS blocked → using REST fallback")
+        LOGGER.warning("WebSocket disabled, using REST fallback")
         from feeds import rest_mark_funding
 
         asyncio.run(rest_mark_funding.run())
