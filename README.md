@@ -1,70 +1,42 @@
-# پروژه Omni-Arb ترکیبی
+# پروفایل آربیتراژ
 
-این ریپو یک اسکلت پروژه ترکیبی برای یکپارچه‌سازی FinGPT، FinRL و کانکتور MEXC فیوچرز می‌باشد.
+## نمای کلی
+- پیاده‌سازی Funding-Arb و Cash-and-Carry روی قراردادهای دائمی Binance USDⓈ-M و OKX.
+- تمرکز بر همگرایی نرخ‌های تأمین مالی و اختلاف قیمت اسپات/فیوچرز.
 
-## ساختار پوشه‌ها
+## اجرا
+- **TIF:** `IOC` | `FOK` | `GTC` | `GTX` (Post-Only).
+- شبه‌کد `GTX = Post-Only`:
+  ```pseudo
+  if tif == "GTX":
+      order.post_only = true
+      reject_if_taker = true
+  ```
+- مسیر Dry-Run:
+  - Binance: `POST /fapi/v1/order/test`
+  - OKX: هدر `x-simulated-trading: 1`
 
+## داده‌های بازار
+- **WebSocket:** جریان "Mark Price Stream (1s)" با الگو `<symbol>@markPrice@1s`.
+- **REST:**
+  - `GET /fapi/v1/fundingRate`
+  - `GET /fapi/v1/fundingInfo`
+
+## ریسک و محافظ
+- فیلترهای تأخیر، لغزش و عمق برای جلوگیری از اجرای ناخواسته.
+- بررسی مقادیر `LOT` و `MIN_NOTIONAL` پیش از ارسال سفارش.
+
+## نصب / اجرا / تست
+```bash
+poetry install
+uvicorn apps.api:app --reload --port 8000
+python apps/dashboard.py
+pytest test_smoke.py
 ```
-omni-arb/
-├── external/                   # افزودن FinGPT و FinRL به عنوان submodule
-│   ├── FinGPT/                 
-│   └── FinRL/                  
-├── connectors/
-│   └── mexc_futures/           # کانکتور MEXC فیوچرز (REST, WS, Auth)
-├── signals/
-│   ├── base.py                 # اینترفیس سیگنال
-│   └── sentiment_fingpt.py     # آداپتور FinGPT برای تولید سیگنال
-├── policy/
-│   ├── base.py                 # اینترفیس پالیسی
-│   ├── rl_agent.py             # پیاده‌سازی RL Agent
-│   └── rules.py                # پالیسی مبتنی بر قوانین ساده
-├── exec/
-│   ├── base.py                 # اینترفیس اجرایی
-│   ├── engine.py               # ماژول اجرای سفارش (dry-run اولیه)
-│   ├── router.py               # مسیردهی سفارش‌ها
-│   └── risk.py                 # مدیریت ریسک و محاسبه اندازه سفارش
-├── apps/
-│   ├── api.py                  # API پروژه با FastAPI
-│   └── dashboard.py            # داشبورد برای نمایش اطلاعات
-├── configs/
-│   └── settings.example.yaml   # فایل نمونه تنظیمات پروژه
-├── tests/
-│   └── test_smoke.py           # تست Smoke برای بررسی عملکرد اولیه
-├── Makefile                    # دستورات ساخت و اجرا
-├── pyproject.toml              # تنظیمات Poetry برای مدیریت وابستگی‌ها
-└── README.md                   # این فایل راهنما
-```
 
-## راهنمای استفاده
-
-1. کلون کردن مخزن:
-   ```
-   git clone <repository_url>
-   cd omni-arb
-   git submodule update --init --recursive
-   ```
-   جهت اضافه کردن submoduleها:
-   ```
-   git submodule add https://github.com/AI4Finance-Foundation/FinGPT external/FinGPT
-   git submodule add https://github.com/AI4Finance-Foundation/FinRL external/FinRL
-   ```
-
-2. نصب وابستگی‌ها:
-   ```
-   poetry install
-   ```
-
-3. اجرای API:
-   ```
-   uvicorn apps.api:app --reload --port 8000
-   ```
-
-4. اجرای داشبورد:
-   ```
-   python apps/dashboard.py
-   ```
-
-5. اجرای تست Smoke:
-   ```
-   pytest tests/test_smoke.py
-   ```
+## مراجع
+- [Binance Futures API – Mark Price Stream](https://binance-docs.github.io/apidocs/futures/en/#mark-price-stream)
+- [Binance Futures API – Funding Rate History](https://binance-docs.github.io/apidocs/futures/en/#get-funding-rate-history)
+- [Binance Futures API – Funding Info](https://binance-docs.github.io/apidocs/futures/en/#get-funding-info)
+- [Binance Futures API – Test New Order](https://binance-docs.github.io/apidocs/futures/en/#test-new-order-trade)
+- [OKX API – Simulated Trading](https://www.okx.com/docs-v5/en/#overview-simulated-trading)
