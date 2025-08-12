@@ -74,7 +74,7 @@ if hydra is not None:
 
 else:  # pragma: no cover - executed only when hydra isn't installed
 
-    def main(cfg: DictConfig | None = None):  # type: ignore[override]
+    def main(cfg: DictConfig):  # type: ignore[override]
         raise ImportError("hydra-core is required to run this script")
 
 
