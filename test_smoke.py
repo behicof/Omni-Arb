@@ -1,28 +1,21 @@
-"""
-تست Smoke برای بررسی عملکرد اولیه سیستم.
-
-این تست شامل:
-- بررسی import ماژول‌های اصلی (signals, policy, exec)
-- اجرای توابع نمونه جهت اطمینان از بارگذاری صحیح ماژول‌ها
-
-در صورت عدم وجود توابع واقعی، استفاده از mock انجام می‌شود.
-"""
+"""تست Smoke برای بررسی عملکرد اولیه سیستم."""
 import unittest
 
 try:
-    from signals import sentiment_fingpt
-except ImportError:
+    import sentiment_fingpt
+except ImportError:  # pragma: no cover - handled in tests
     sentiment_fingpt = None
 
 try:
-    from policy import rl_agent
-except ImportError:
-    rl_agent = None
+    from rl import env as rl_env
+except ImportError:  # pragma: no cover
+    rl_env = None
 
 try:
-    from exec import engine
-except ImportError:
+    import engine
+except ImportError:  # pragma: no cover
     engine = None
+
 
 class SmokeTest(unittest.TestCase):
     """کلاس تست Smoke جهت بررسی عملکرد پایه سیستم"""
@@ -30,8 +23,9 @@ class SmokeTest(unittest.TestCase):
     def test_imports(self):
         """تست import بخش‌های اصلی پروژه"""
         self.assertIsNotNone(sentiment_fingpt, "ماژول sentiment_fingpt باید موجود باشد")
-        self.assertIsNotNone(rl_agent, "ماژول rl_agent باید موجود باشد")
+        self.assertIsNotNone(rl_env, "ماژول rl.env باید موجود باشد")
         self.assertIsNotNone(engine, "ماژول engine باید موجود باشد")
+
 
 if __name__ == "__main__":
     unittest.main()

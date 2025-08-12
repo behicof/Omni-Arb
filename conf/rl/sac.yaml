@@ -1,0 +1,11 @@
+algo: sac
+env:
+  seed: 42
+train:
+  total_timesteps: 10000
+model:
+  policy: MlpPolicy
+  learning_rate: 0.0003
+eval_freq: 1000
+eval_episodes: 5
+early_stop_sharpe: 0.0
