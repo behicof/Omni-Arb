@@ -16,7 +16,17 @@ def _format_currency(value: float) -> str:
 
     return f"$ {value:,.2f}"
 
+def _format_currency(value: float, currency_symbol: str = "$") -> str:
+    """Return ``value`` formatted as a currency string.
 
+    Parameters
+    ----------
+    value : float
+        The numeric value to format.
+    currency_symbol : str, optional
+        The symbol to use for the currency (default is "$").
+    """
+    return f"{currency_symbol} {value:,.2f}"
 def generate_report(pnl_rollup: Dict[date, float], risk: Dict[str, float]) -> str:
     """Create a natural‑language report for PnL and risk metrics.
 
