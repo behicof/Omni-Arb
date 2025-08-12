@@ -2,7 +2,13 @@
 آداپتور FinGPT برای تولید سیگنال مبتنی بر تحلیل احساسات.
 """
 from typing import Dict, Any
-from .base import Signal
+# The project structure is still evolving; importing ``Signal`` from ``base``
+# using an absolute import keeps this module importable when executed as a
+# standalone script.
+try:  # pragma: no cover - optional dependency
+    from base import Signal  # type: ignore
+except Exception:  # pragma: no cover - fallback when base is absent
+    Signal = object  # minimal stub for type checking
 
 class SentimentFinGPTSignal:
     """

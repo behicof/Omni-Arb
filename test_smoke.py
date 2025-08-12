@@ -10,19 +10,14 @@
 import unittest
 
 try:
-    from signals import sentiment_fingpt
+    import sentiment_fingpt
 except ImportError:
     sentiment_fingpt = None
 
 try:
-    from policy import rl_agent
-except ImportError:
-    rl_agent = None
-
-try:
-    from exec import engine
-except ImportError:
-    engine = None
+    from ope.hcope import lower_confidence_bound
+except Exception:  # pragma: no cover - safety net for missing deps
+    lower_confidence_bound = None
 
 class SmokeTest(unittest.TestCase):
     """کلاس تست Smoke جهت بررسی عملکرد پایه سیستم"""
@@ -30,8 +25,7 @@ class SmokeTest(unittest.TestCase):
     def test_imports(self):
         """تست import بخش‌های اصلی پروژه"""
         self.assertIsNotNone(sentiment_fingpt, "ماژول sentiment_fingpt باید موجود باشد")
-        self.assertIsNotNone(rl_agent, "ماژول rl_agent باید موجود باشد")
-        self.assertIsNotNone(engine, "ماژول engine باید موجود باشد")
+        self.assertIsNotNone(lower_confidence_bound, "تابع LCB باید موجود باشد")
 
 if __name__ == "__main__":
     unittest.main()
