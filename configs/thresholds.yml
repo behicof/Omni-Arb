@@ -5,6 +5,12 @@ funding_arb:
   min_depth_notional: 2000
 
 cash_and_carry:
-  basis_bps: 20           # آستانهٔ ورود پس از کسر هزینه‌ها
+  net_edge_bps: 8         # Entry if NetEdge ≥ 0.08% (ورود اگر NetEdge ≥ 0.08%)
+  max_leg_latency_ms: 800
+  slippage_bps: 3         # Estimated slippage per leg (برآورد اسلیپیج هر لِگ)
+  min_depth_notional: 2000
+
+cash_and_carry:
+  basis_bps: 20           # Entry threshold after costs (آستانهٔ ورود پس از کسر هزینه‌ها)
   max_days: 7
 
