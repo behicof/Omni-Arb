@@ -1,3 +1,5 @@
+import pytest
+
 from ope.hcope import lower_confidence_bound, evaluate_file
 
 
@@ -13,3 +15,9 @@ def test_evaluate_file_threshold_passes():
     path = "tests/sample_trajectory.json"
     lcb = evaluate_file(path, threshold=0.1)
     assert lcb > 0.1
+
+
+def test_evaluate_file_threshold_fails():
+    path = "tests/sample_trajectory.json"
+    with pytest.raises(SystemExit):
+        evaluate_file(path, threshold=0.5)
