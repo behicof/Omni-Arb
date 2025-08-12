@@ -5,6 +5,10 @@ import asyncio
 async def run() -> None:
     """Run the REST fallback poller (placeholder)."""
 import logging
+
+async def run() -> None:
+    """Run the REST fallback poller (placeholder)."""
+    # TODO: Implement REST fallback poller
 async def run() -> None:
     """Run the REST fallback poller (placeholder)."""
     # TODO: Implement REST fallback poller
