@@ -52,7 +52,7 @@ def validate_order_filters(symbol: str, quantity: float, price: float, exchange:
     qty_ok = min_qty <= quantity <= max_qty and (quantity / step_size).is_integer()
     notional_ok = notional >= min_notional
     if not (qty_ok and notional_ok):
-        raise ValueError("Order does not satisfy LOT_SIZE یا MIN_NOTIONAL")
+        raise ValueError("سفارش با فیلترهای LOT_SIZE یا MIN_NOTIONAL مطابقت ندارد")
 
 
 def calculate_risk(order: Dict[str, Any]) -> Dict[str, Any]:
