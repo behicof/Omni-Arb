@@ -1,70 +1,51 @@
-# پروژه Omni-Arb ترکیبی
+# Omni-Arb
 
-این ریپو یک اسکلت پروژه ترکیبی برای یکپارچه‌سازی FinGPT، FinRL و کانکتور MEXC فیوچرز می‌باشد.
+این ریپو اسکلت اولیه برای سیستم آربیتراژ **OMNI-ARB** است. تمرکز فعلی روی فاز صفر و فاز یک یعنی ساخت زیرساخت و پیاده‌سازی ماژول‌های Funding-Rate Arbitrage و Cash-and-Carry می‌باشد.
 
 ## ساختار پوشه‌ها
 
 ```
 omni-arb/
-├── external/                   # افزودن FinGPT و FinRL به عنوان submodule
-│   ├── FinGPT/                 
-│   └── FinRL/                  
-├── connectors/
-│   └── mexc_futures/           # کانکتور MEXC فیوچرز (REST, WS, Auth)
-├── signals/
-│   ├── base.py                 # اینترفیس سیگنال
-│   └── sentiment_fingpt.py     # آداپتور FinGPT برای تولید سیگنال
-├── policy/
-│   ├── base.py                 # اینترفیس پالیسی
-│   ├── rl_agent.py             # پیاده‌سازی RL Agent
-│   └── rules.py                # پالیسی مبتنی بر قوانین ساده
-├── exec/
-│   ├── base.py                 # اینترفیس اجرایی
-│   ├── engine.py               # ماژول اجرای سفارش (dry-run اولیه)
-│   ├── router.py               # مسیردهی سفارش‌ها
-│   └── risk.py                 # مدیریت ریسک و محاسبه اندازه سفارش
-├── apps/
-│   ├── api.py                  # API پروژه با FastAPI
-│   └── dashboard.py            # داشبورد برای نمایش اطلاعات
-├── configs/
-│   └── settings.example.yaml   # فایل نمونه تنظیمات پروژه
-├── tests/
-│   └── test_smoke.py           # تست Smoke برای بررسی عملکرد اولیه
-├── Makefile                    # دستورات ساخت و اجرا
-├── pyproject.toml              # تنظیمات Poetry برای مدیریت وابستگی‌ها
-└── README.md                   # این فایل راهنما
+├── core/
+│   ├── execution/
+│   │   ├── funding_arb.py
+│   │   ├── cash_and_carry.py
+│   │   └── cross_exchange.py
+│   ├── exchange/
+│   │   ├── binance.py
+│   │   └── okx.py
+│   └── risk/
+│       ├── sizing.py
+│       └── guards.py
+├── orchestrator/
+│   └── finrobot_flow.py
+├── nlp/
+│   └── fingpt_hooks.py
+├── research/
+│   ├── finrl_meta_scenarios/
+│   ├── elegantrl_training/
+│   └── deepseek_risk_fusion/
+├── deploy/
+│   ├── docker-compose.yml
+│   └── config/
+│       ├── exchanges.yml
+│       ├── thresholds.yml
+│       └── risk.yml
+└── tests/
+    └── test_smoke.py
 ```
 
-## راهنمای استفاده
+## اجرا و تست
 
-1. کلون کردن مخزن:
-   ```
-   git clone <repository_url>
-   cd omni-arb
-   git submodule update --init --recursive
-   ```
-   جهت اضافه کردن submoduleها:
-   ```
-   git submodule add https://github.com/AI4Finance-Foundation/FinGPT external/FinGPT
-   git submodule add https://github.com/AI4Finance-Foundation/FinRL external/FinRL
-   ```
+### تست سریع
+```
+pytest
+```
 
-2. نصب وابستگی‌ها:
-   ```
-   poetry install
-   ```
+### Docker Compose
+```
+cd deploy
+docker compose up
+```
 
-3. اجرای API:
-   ```
-   uvicorn apps.api:app --reload --port 8000
-   ```
-
-4. اجرای داشبورد:
-   ```
-   python apps/dashboard.py
-   ```
-
-5. اجرای تست Smoke:
-   ```
-   pytest tests/test_smoke.py
-   ```
+این ساختار پایه برای توسعه‌های بعدی بر اساس نقشه‌راه ارائه شده آماده شده است.
