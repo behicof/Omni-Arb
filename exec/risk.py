@@ -10,7 +10,6 @@ def load_risk_config(path: str) -> Dict[str, Any]:
     """بارگذاری تنظیمات ریسک از فایل YAML."""
     with open(path, "r", encoding="utf-8") as fh:
         return yaml.safe_load(fh) or {}
-
     try:
         with open(path, "r", encoding="utf-8") as fh:
             return yaml.safe_load(fh) or {}
