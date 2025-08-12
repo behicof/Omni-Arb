@@ -11,7 +11,15 @@ def load_risk_config(path: str) -> Dict[str, Any]:
     with open(path, "r", encoding="utf-8") as fh:
         return yaml.safe_load(fh) or {}
 
-
+    try:
+        with open(path, "r", encoding="utf-8") as fh:
+            return yaml.safe_load(fh) or {}
+    except (FileNotFoundError, PermissionError) as e:
+        print(f"Risk config file error: {e}")
+        return {}
+    except yaml.YAMLError as e:
+        print(f"YAML parsing error in risk config: {e}")
+        return {}
 def calculate_risk(order: Dict[str, Any], config: Dict[str, Any]) -> Dict[str, Any]:
     """اعمال حدود ریسک بر روی سفارش."""
     size = min(order.get("size", 1.0), config.get("risk_caps", {}).get("max_position_size", float("inf")))
