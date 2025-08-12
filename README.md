@@ -27,7 +27,8 @@ omni-arb/
 │   ├── api.py                  # API پروژه با FastAPI
 │   └── dashboard.py            # داشبورد برای نمایش اطلاعات
 ├── configs/
-│   └── settings.example.yaml   # فایل نمونه تنظیمات پروژه
+│   ├── thresholds.yml          # آستانه‌های معاملاتی برای هر صرافی
+│   └── risk.yml                # تنظیمات ریسک (EXCHANGES, LIVE, LOG_LEVEL)
 ├── tests/
 │   └── test_smoke.py           # تست Smoke برای بررسی عملکرد اولیه
 ├── Makefile                    # دستورات ساخت و اجرا
@@ -68,3 +69,14 @@ omni-arb/
    ```
    pytest tests/test_smoke.py
    ```
+
+## تنظیمات
+
+پیکربندی آستانه‌ها و ریسک در پوشه `configs/` قرار دارد:
+
+- `risk.yml`: شامل لیست صرافی‌های فعال (مانند BINANCE و OKX)، وضعیت اجرای زنده (`LIVE=0`) و سطح لاگ (`LOG_LEVEL=INFO`).
+- `thresholds.yml`: تعیین مقادیری مانند `net_edge_bps`، `max_leg_latency_ms`، `slippage_bps` و `min_depth_notional` برای هر صرافی.
+
+## اعتبارسنجی فیلترهای صرافی
+
+پیش از ارسال هر سفارش، اطلاعات نماد از طریق متد `exchangeInfo` دریافت شده و فیلترهای `LOT_SIZE` و `MIN_NOTIONAL` اعتبارسنجی می‌شوند. برای جزئیات بیش‌تر به [مستندات Binance](https://binance-docs.github.io/apidocs/spot/en/#exchange-information) مراجعه کنید.
