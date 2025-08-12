@@ -51,7 +51,7 @@ class TradingEnv(gym.Env):
         reward = exposure * price_change
 
         price = self.state[0] + price_change
-        spread = abs(self.rng.normal(scale=0.05))
+        spread = self.rng.uniform(0.01, 0.1)
         volume = self.rng.uniform(1, 10)
         risk_on = 1.0 if abs(exposure) > 0.5 else 0.0
         drawdown_flag = 1.0 if reward < -0.1 else 0.0
