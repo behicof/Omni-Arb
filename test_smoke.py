@@ -1,37 +1,22 @@
-"""
-تست Smoke برای بررسی عملکرد اولیه سیستم.
-
-این تست شامل:
-- بررسی import ماژول‌های اصلی (signals, policy, exec)
-- اجرای توابع نمونه جهت اطمینان از بارگذاری صحیح ماژول‌ها
-
-در صورت عدم وجود توابع واقعی، استفاده از mock انجام می‌شود.
-"""
+"""Basic tests for connectivity utilities."""
 import unittest
 
-try:
-    from signals import sentiment_fingpt
-except ImportError:
-    sentiment_fingpt = None
+from binance import compute_net_edge
+from okx import OKXClient
 
-try:
-    from policy import rl_agent
-except ImportError:
-    rl_agent = None
 
-try:
-    from exec import engine
-except ImportError:
-    engine = None
+class UtilTest(unittest.TestCase):
+    def test_compute_net_edge_clamps(self) -> None:
+        self.assertEqual(compute_net_edge(0.05, 0.01, -0.01), 0.01)
+        self.assertEqual(compute_net_edge(-0.05, 0.01, -0.01), -0.01)
+        self.assertEqual(compute_net_edge(0.005, 0.01, -0.01), 0.005)
 
-class SmokeTest(unittest.TestCase):
-    """کلاس تست Smoke جهت بررسی عملکرد پایه سیستم"""
+    def test_okx_demo_header(self) -> None:
+        demo = OKXClient(demo=True)
+        self.assertEqual(demo.session.headers.get("x-simulated-trading"), "1")
+        live = OKXClient(demo=False)
+        self.assertIsNone(live.session.headers.get("x-simulated-trading"))
 
-    def test_imports(self):
-        """تست import بخش‌های اصلی پروژه"""
-        self.assertIsNotNone(sentiment_fingpt, "ماژول sentiment_fingpt باید موجود باشد")
-        self.assertIsNotNone(rl_agent, "ماژول rl_agent باید موجود باشد")
-        self.assertIsNotNone(engine, "ماژول engine باید موجود باشد")
 
 if __name__ == "__main__":
     unittest.main()
