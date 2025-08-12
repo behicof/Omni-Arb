@@ -2,7 +2,6 @@
 آداپتور FinGPT برای تولید سیگنال مبتنی بر تحلیل احساسات.
 """
 from typing import Dict, Any
-from .base import Signal
 
 class SentimentFinGPTSignal:
     """
