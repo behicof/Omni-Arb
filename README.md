@@ -54,7 +54,6 @@
 ├── Makefile
 └── pyproject.toml
 
-````
 
 ---
 
