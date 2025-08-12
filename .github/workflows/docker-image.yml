@@ -14,5 +14,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: pip install pytest
+    - name: Run OPE safety gate
+      run: python -m ope.hcope --input tests/sample_trajectory.json --threshold 0.1
+    - name: Run tests
+      run: pytest
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
