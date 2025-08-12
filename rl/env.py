@@ -86,7 +86,7 @@ class MicrostructureEnv(gym.Env):
         result = self.sim.simulate_leg(leg)
         reward = float(-result.implementation_shortfall)
 
-        self.position_notional += notional
+        self.position_notional += notional if action >= 0 else -notional
         self.step_count += 1
 
         obs = self._get_obs()
