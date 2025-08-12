@@ -1,70 +1,153 @@
-# پروژه Omni-Arb ترکیبی
+# Omni-Arb — Funding & Basis Arbitrage (Binance / OKX)
 
-این ریپو یک اسکلت پروژه ترکیبی برای یکپارچه‌سازی FinGPT، FinRL و کانکتور MEXC فیوچرز می‌باشد.
+**هدف:** موتور آربیتراژ «Rule-based و سریع» برای:
+- **Funding-Rate Arbitrage** (دلتا-نوتورال: دریافت/پرداخت Funding با هج دلتا)
+- **Cash-and-Carry / Basis** (قفل فاصله‌ی فیوچرز–اسپات پس از کسر هزینه‌ها)
+- (بعداً اختیاری) Cross-Exchange / Triangular روی نمادهای پرنقد
 
-## ساختار پوشه‌ها
+> پیش‌فرض: **Binance USDⓈ-M** و **OKX Perpetuals**. پشتیبانی **MEXC** بعداً به‌صورت ماژول اختیاری اضافه می‌شود.
 
-```
-omni-arb/
-├── external/                   # افزودن FinGPT و FinRL به عنوان submodule
-│   ├── FinGPT/                 
-│   └── FinRL/                  
-├── connectors/
-│   └── mexc_futures/           # کانکتور MEXC فیوچرز (REST, WS, Auth)
-├── signals/
-│   ├── base.py                 # اینترفیس سیگنال
-│   └── sentiment_fingpt.py     # آداپتور FinGPT برای تولید سیگنال
-├── policy/
-│   ├── base.py                 # اینترفیس پالیسی
-│   ├── rl_agent.py             # پیاده‌سازی RL Agent
-│   └── rules.py                # پالیسی مبتنی بر قوانین ساده
-├── exec/
-│   ├── base.py                 # اینترفیس اجرایی
-│   ├── engine.py               # ماژول اجرای سفارش (dry-run اولیه)
-│   ├── router.py               # مسیردهی سفارش‌ها
-│   └── risk.py                 # مدیریت ریسک و محاسبه اندازه سفارش
-├── apps/
-│   ├── api.py                  # API پروژه با FastAPI
-│   └── dashboard.py            # داشبورد برای نمایش اطلاعات
+---
+
+## معماری
+- **Core:**  \\
+  \[
+  \text{NetEdge}_{bps}=\text{Funding}_{recv}-\text{Fees}-\text{Borrow/Carry}-\text{Slippage}
+  \]
+  آستانه‌ها/گاردها از `configs/thresholds.yml` خوانده می‌شوند.  \\
+- **Execution:** سفارش‌های Limit با **IOC** (اتمیک) یا **GTX/Post-Only** (میکر واقعی). Dry-Run بایننس از مسیر **`POST /fapi/v1/order/test`** و OKX با هدر **`x-simulated-trading: 1`**.  \\
+- **Risk & Guards:** گارد تأخیر لِگ، اسلیپیج، عمق، سقف ناتیونال، و اعمال فیلترهای LOT/NOTIONAL.  \\
+- **Market Data:** WebSocket مارک‌پرایس/فاندینگ + Poll اندپوینت‌های Funding/Info.  \\
+- **NLP/RL Hooks (اختیاری):** FinGPT برای گزارش زبانی؛ FinRobot/FinRL برای پژوهش.
+
+**مراجع:** Binance Funding History/Info، Mark-Price Stream، Position Mode؛ OKX Funding Mechanism و Demo Header.  \\
+(به منابع انتهای README مراجعه کنید.)
+
+---
+
+## ساختار ریپو (به‌روز با فایل‌های فعلی)
+````
+
+.
+├── engine.py              # هسته‌ی اجرا (ورود/خروج، Dry-Run/LIVE switch)
+├── ws.py                  # فید WS (e.g., <symbol>@markPrice\@1s)
+├── rest.py                # REST (Binance/OKX) + امضا
+├── risk.py                # sizing, guards, limits
+├── sentiment_fingpt.py    # hook اختیاری به FinGPT (گزارش)
+├── base.py, auth.py       # کمک‌کارها (signing/session)
+├── main.py                # entrypoint (smoke-run/daemon)
+├── test_smoke.py          # تست پایه
 ├── configs/
-│   └── settings.example.yaml   # فایل نمونه تنظیمات پروژه
-├── tests/
-│   └── test_smoke.py           # تست Smoke برای بررسی عملکرد اولیه
-├── Makefile                    # دستورات ساخت و اجرا
-├── pyproject.toml              # تنظیمات Poetry برای مدیریت وابستگی‌ها
-└── README.md                   # این فایل راهنما
+│   ├── thresholds.yml     # آستانه‌ها (θ، slippage، latency، depth)
+│   └── risk.yml           # سقف‌ها (max_notional, per-symbol caps)
+├── .env.example           # کلیدها و تنظیمات اجرایی (بدون کامیت کلید واقعی)
+├── Dockerfile
+├── Makefile
+└── pyproject.toml
+
+````
+
+---
+
+## نصب و اجرای سریع
+```bash
+# نصب
+pip install -e .     # یا poetry/uv به انتخاب شما
+pytest -q            # تست پایه
+
+# Smoke: چاپ NetEdge فرضی + گاردها
+python main.py --smoke
+
+# Dry-Run واقعی
+export LIVE=0        # Binance: /order/test / OKX: x-simulated-trading: 1
+python main.py --symbols BTCUSDT,ETHUSDT --mode funding
 ```
 
-## راهنمای استفاده
+---
 
-1. کلون کردن مخزن:
-   ```
-   git clone <repository_url>
-   cd omni-arb
-   git submodule update --init --recursive
-   ```
-   جهت اضافه کردن submoduleها:
-   ```
-   git submodule add https://github.com/AI4Finance-Foundation/FinGPT external/FinGPT
-   git submodule add https://github.com/AI4Finance-Foundation/FinRL external/FinRL
-   ```
+## سیاست ورود/خروج
 
-2. نصب وابستگی‌ها:
-   ```
-   poetry install
-   ```
+**Funding-Arb (دلتا-نوتورال):**
 
-3. اجرای API:
-   ```
-   uvicorn apps.api:app --reload --port 8000
-   ```
+```
+Enter if:   NetEdge_bps ≥ THRESHOLD
+Guards:     latency ≤ Lmax, slippage ≤ Smax, depth ≥ Dmin
+```
 
-4. اجرای داشبورد:
-   ```
-   python apps/dashboard.py
-   ```
+**Cash-and-Carry (Basis):**
 
-5. اجرای تست Smoke:
-   ```
-   pytest tests/test_smoke.py
-   ```
+```
+Enter if:   ((Futures - Spot) / Spot)×10,000 ≥ THRESHOLD  # پس از کسر fee/carry/slippage
+Exit:       افت لبه، تغییر نامطلوب Cap/Floor/Interval، یا نقض گاردها
+```
+
+---
+
+## سفارش‌ها و حالت حساب (Binance)
+
+* **TIF:** `IOC | FOK | GTC | GTX(Post-Only)`؛ GTX فقط اگر سفارش *حتماً* میکر بماند پذیرفته می‌شود.
+* **Position Mode:** `POST/GET /fapi/v1/positionSide/dual` برای Hedge/One-way؛ `positionSide` و `reduceOnly` متناسب تنظیم می‌شوند.
+
+---
+
+## داده‌های بازار
+
+* **WS (Binance):** `<symbol>@markPrice@1s` → مارک‌پرایس + فاندینگ تخمینی.
+* **REST Poll (Binance):**
+  `GET /fapi/v1/fundingRate` (هیستوری/آخرین نرخ)
+  `GET /fapi/v1/fundingInfo` (cap/floor/interval)
+* **OKX:** فرمول فاندینگ = Clamp\[Average Premium Index ± interest tweak, Cap, Floor] (WMA)؛ دمو با `x-simulated-trading: 1`.
+
+---
+
+## پیکربندی کلیدها
+
+```
+# .env.example
+BINANCE_API_KEY=...
+BINANCE_API_SECRET=...
+OKX_API_KEY=...
+OKX_API_SECRET=...
+OKX_PASSPHRASE=...
+ENV=dev
+LIVE=0
+LOG_LEVEL=INFO
+```
+
+---
+
+## تست‌ها
+
+```bash
+pytest -q
+# شامل: محاسبه‌ی net_edge، basis، رُندینگ lot، مسیرهای IOC/GTX و order/test، و Hedge mode
+```
+
+---
+
+## نقشهٔ راه کوتاه
+
+* [ ] CSV logger برای NetEdge/Guards/Reject
+* [ ] گزارش روزانه Funding P&L
+* [ ] Cross-Exchange روی نمادهای پرنقد
+* [ ] FinRobot pipeline (Scout→Risk→Sizer→Trader→Settlement)
+
+---
+
+## منابع
+
+* Binance — Funding Rate History: [https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-History](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-History)
+* Binance — Funding Rate Info (Cap/Floor/Interval): [https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-Info](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-Info)
+* Binance — Mark Price Stream: [https://developers.binance.com/docs/derivatives/usds-margined-futures/websocket-market-streams/Mark-Price-Stream](https://developers.binance.com/docs/derivatives/usds-margined-futures/websocket-market-streams/Mark-Price-Stream)
+* Binance — Position Mode (set/get): [https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Change-Position-Mode](https://developers.binance.com/docs/derivatives/usds-margined-futures/trade/rest-api/Change-Position-Mode) , [https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Current-Position-Mode](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Get-Current-Position-Mode)
+* Binance — Announcements/FAQ for funding caps/frequency: [https://www.binance.com/en/support/announcement/detail/3243c81a35bd4f0c86a37315c3dc96cc](https://www.binance.com/en/support/announcement/detail/3243c81a35bd4f0c86a37315c3dc96cc) , [https://www.binance.com/en/support/announcement/detail/98d6b24d3e5c4f84a8ed04087997d8d0](https://www.binance.com/en/support/announcement/detail/98d6b24d3e5c4f84a8ed04087997d8d0)
+* Binance — TIF definitions (GTX = Post-Only): [https://developers.binance.com/docs/derivatives/coin-margined-futures/common-definition](https://developers.binance.com/docs/derivatives/coin-margined-futures/common-definition)
+* OKX — Funding fee mechanism (Clamp/Cap/Floor + WMA update): [https://www.okx.com/en-us/help/iv-introduction-to-perpetual-swap-funding-fee](https://www.okx.com/en-us/help/iv-introduction-to-perpetual-swap-funding-fee) , [https://www.okx.com/help/okx-to-optimize-funding-rate-calculation](https://www.okx.com/help/okx-to-optimize-funding-rate-calculation)
+* OKX — API v5 & Simulated trading header: [https://www.okx.com/docs-v5/en/](https://www.okx.com/docs-v5/en/) , [https://www.okx.com/en-us/help/api-faq](https://www.okx.com/en-us/help/api-faq)
+
+```
+
+> نکته: لینک‌های بالا در متن به‌صورت مرجع ذکر شدند؛ خلاصه‌ی رسمی هرکدام در بخش «Resources/مراجع» آمده است. (برای جلوگیری از شکستن فرمت، URLها در بلوک کد بالا درج شده‌اند.)
+
+---
+
