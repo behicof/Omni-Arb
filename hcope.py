@@ -30,6 +30,9 @@ def evaluate_policy_performance(
 ) -> float:
     """Evaluate policy performance using the lower confidence bound of Sharpe ratio.
 
+    The calculated bound is printed for visibility when running experiments or
+    backtests so users can quickly inspect the conservative estimate.
+
     Args:
         estimated_sharpe: Estimated Sharpe ratio of the policy.
         estimated_std_sharpe: Standard deviation of the Sharpe ratio estimate.
@@ -38,29 +41,38 @@ def evaluate_policy_performance(
     Returns:
         The lower confidence bound of the Sharpe ratio.
     """
-    return calculate_lcb(estimated_sharpe, estimated_std_sharpe, confidence_level)
+    lcb = calculate_lcb(estimated_sharpe, estimated_std_sharpe, confidence_level)
+    print(f"Lower confidence bound (LCB) for Sharpe ratio: {lcb}")
+    return lcb
 
 
 def hcope_gate(
     sharpe_ratio: float,
     sharpe_std: float,
-    threshold: float = 0.0,
+    threshold: float = 1.0,
     confidence_level: float = 0.95,
 ) -> bool:
     """Check if a policy passes the HCOPE gate.
 
     The gate passes when the lower confidence bound (LCB) of the Sharpe ratio
     is greater than or equal to the provided threshold.  By default the
-    threshold is set to ``0.0`` which simply checks that the LCB is positive.
+    threshold is set to ``1.0`` which requires the policy to have a
+    risk-adjusted return better than a ``1`` Sharpe ratio before execution.
 
     Args:
         sharpe_ratio: Estimated Sharpe ratio of the policy.
         sharpe_std: Standard deviation of the Sharpe ratio estimate.
-        threshold: Minimum acceptable lower confidence bound (default ``0.0``).
+        threshold: Minimum acceptable lower confidence bound (default ``1.0``).
         confidence_level: Confidence level for the bound (default 95%).
 
     Returns:
         ``True`` if the policy passes the gate, ``False`` otherwise.
     """
     lcb_sharpe = evaluate_policy_performance(sharpe_ratio, sharpe_std, confidence_level)
-    return lcb_sharpe >= threshold
+    if lcb_sharpe >= threshold:
+        print("Policy passed the HCOPE gate; proceeding with execution.")
+        return True
+    print(
+        f"Policy failed the HCOPE gate. LCB {lcb_sharpe} is below the threshold {threshold}."
+    )
+    return False
