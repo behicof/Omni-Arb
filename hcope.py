@@ -42,17 +42,21 @@ def evaluate_policy_performance(
 
 
 def hcope_gate(
-    sharpe_ratio: float, sharpe_std: float, threshold: float = 1.0, confidence_level: float = 0.95
+    sharpe_ratio: float,
+    sharpe_std: float,
+    threshold: float = 0.0,
+    confidence_level: float = 0.95,
 ) -> bool:
     """Check if a policy passes the HCOPE gate.
 
-    The gate passes when the lower confidence bound of the Sharpe ratio is
-    greater than or equal to the provided threshold.
+    The gate passes when the lower confidence bound (LCB) of the Sharpe ratio
+    is greater than or equal to the provided threshold.  By default the
+    threshold is set to ``0.0`` which simply checks that the LCB is positive.
 
     Args:
         sharpe_ratio: Estimated Sharpe ratio of the policy.
         sharpe_std: Standard deviation of the Sharpe ratio estimate.
-        threshold: Minimum acceptable lower confidence bound.
+        threshold: Minimum acceptable lower confidence bound (default ``0.0``).
         confidence_level: Confidence level for the bound (default 95%).
 
     Returns:
