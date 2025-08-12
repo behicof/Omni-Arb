@@ -29,7 +29,7 @@ def sharpe_ratio(returns: Iterable[float]) -> float:
     mean = sum(ret_list) / n
     var = sum((r - mean) ** 2 for r in ret_list) / n
     std = math.sqrt(var)
-    return 0.0 if std == 0 else mean / std * math.sqrt(n)
+    return 0.0 if std == 0 else mean / std * math.sqrt(periods_per_year)
 
 
 def max_drawdown(returns: Iterable[float]) -> float:
