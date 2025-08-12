@@ -66,7 +66,6 @@ def variance(returns: Iterable[float]) -> float:
         return 0.0
     mean = sum(ret_list) / n
     return sum((r - mean) ** 2 for r in ret_list) / n
-
 # Removed duplicate variance function; use _variance instead.
 def run_wfo(
     data: Iterable[Dict[str, float]], n_splits: int = 5, embargo_pct: float = 0.0
