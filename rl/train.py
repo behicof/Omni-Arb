@@ -41,7 +41,7 @@ def train(cfg: Any):
                 return_episode_rewards=True,
             )
             returns = np.array(returns)
-            sharpe = returns.mean() / (returns.std() + 1e-8)
+            sharpe = returns.mean() * np.sqrt(252) / (returns.std() + 1e-8)
             # stop training if Sharpe below threshold
             return bool(sharpe >= self.threshold)
 
