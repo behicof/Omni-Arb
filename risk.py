@@ -15,7 +15,7 @@ def _fetch_exchange_info(symbol: str, exchange: str = "BINANCE") -> Dict[str, An
         params = {"instType": "SPOT", "instId": symbol}
     else:
         raise ValueError("Unsupported exchange")
-    response = requests.get(url, params=params)
+    response = requests.get(url, params=params, timeout=10)
     response.raise_for_status()
     return response.json()
 
