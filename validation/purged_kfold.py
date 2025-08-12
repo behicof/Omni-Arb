@@ -67,6 +67,27 @@ class PurgedKFold:
                 end_i = t1[idx]
                 if start_i <= test_end and end_i >= test_start:
                     # Purge observations whose label intervals overlap test set.
+            # Compute embargo window after the test set
+            if embargo > 0.0:
+                # Embargo window is a fraction of the total time range
+                total_time = starts[-1] - starts[0]
+                embargo_delta = embargo * total_time
+                embargo_start = test_end
+                embargo_end = test_end + embargo_delta
+            else:
+                embargo_start = embargo_end = None
+
+            train_indices: List[int] = []
+            for idx in indices:
+                if idx in test_indices:
+                    continue
+                start_i = starts[idx]
+                end_i = t1[idx]
+                # Purge observations whose label intervals overlap test set
+                if start_i <= test_end and end_i >= test_start:
+                    continue
+                # Purge observations whose label intervals overlap embargo window
+                if embargo > 0.0 and start_i <= embargo_end and end_i >= embargo_start:
                     continue
                 train_indices.append(idx)
 
