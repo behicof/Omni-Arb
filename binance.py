@@ -72,7 +72,7 @@ async def mark_price_stream(symbols: Iterable[str], csv_file: str | Path) -> Non
                     with csv_path.open("a", newline="") as f:
                         writer = csv.writer(f)
                         writer.writerow([ts, mark_price, funding_rate, next_funding])
-        except Exception as exc:  # pragma: no cover - network failures
+        except (ConnectionClosed, InvalidURI, OSError) as exc:  # pragma: no cover - network failures
             print("WebSocket error", exc)
             await asyncio.sleep(backoff)
             backoff = min(backoff * 2, 60)  # exponential backoff
