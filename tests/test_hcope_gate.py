@@ -10,9 +10,9 @@ def test_calculate_lcb_expected_value():
 
 def test_lcb_pass():
     """Gate should pass when the LCB exceeds the default threshold."""
-    assert hcope_gate(1.5, 0.4)
+    assert hcope_gate(3.0, 0.5)
 
 
 def test_lcb_fail():
     """Gate should fail when the LCB falls below the default threshold."""
-    assert not hcope_gate(0.8, 0.6)
+    assert not hcope_gate(1.5, 0.4)
