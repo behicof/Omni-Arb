@@ -27,7 +27,22 @@ def sharpe_ratio(returns: Iterable[float]) -> float:
     if n == 0:
         return 0.0
     mean = sum(ret_list) / n
-    var = sum((r - mean) ** 2 for r in ret_list) / n
+def _variance(returns: Iterable[float]) -> float:
+    ret_list = list(returns)
+    n = len(ret_list)
+    if n == 0:
+        return 0.0
+    mean = sum(ret_list) / n
+    return sum((r - mean) ** 2 for r in ret_list) / n
+
+
+def sharpe_ratio(returns: Iterable[float]) -> float:
+    ret_list = list(returns)
+    n = len(ret_list)
+    if n == 0:
+        return 0.0
+    mean = sum(ret_list) / n
+    var = _variance(ret_list)
     std = math.sqrt(var)
     return 0.0 if std == 0 else mean / std * math.sqrt(periods_per_year)
 
