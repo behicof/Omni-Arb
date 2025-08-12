@@ -26,7 +26,6 @@ def sharpe_ratio(returns: Iterable[float]) -> float:
     n = len(ret_list)
     if n == 0:
         return 0.0
-    mean = sum(ret_list) / n
 def _variance(returns: Iterable[float]) -> float:
     ret_list = list(returns)
     n = len(ret_list)
