@@ -1,0 +1,8 @@
+max_latency_ms: 150
+max_slippage_bps: 5
+min_depth_units: 1000
+risk_caps:
+  max_notional: 100000
+  max_daily_loss: 5000
+  max_position_size: 100
+net_edge_bps_threshold: 10
