@@ -5,4 +5,9 @@ import asyncio
 async def run() -> None:
     """Run the REST fallback poller (placeholder)."""
     # TODO: Implement REST fallback poller
-    raise NotImplementedError("REST poller not yet implemented")
+import logging
+async def run() -> None:
+    """Run the REST fallback poller (placeholder)."""
+    # TODO: Implement REST fallback poller
+    logging.warning("REST poller not yet implemented. Exiting gracefully.")
+    return
