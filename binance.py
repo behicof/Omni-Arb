@@ -113,4 +113,34 @@ def poll_funding_info(symbols: Iterable[str], interval: float = 1.0) -> None:
             print(
                 f"{symbol} fundingRate={rate} netEdge={net_edge} interval={interval_ms}ms"
             )
-        time.sleep(interval)
+    backoff = 1
+    while True:  # pragma: no cover - long running loop
+        try:
+            for symbol in symbols:
+                rate_resp = session.get(
+                    f"{BINANCE_REST_BASE}/fapi/v1/fundingRate",
+                    params={"symbol": symbol, "limit": 1},
+                    timeout=10,
+                ).json()
+                if not rate_resp:
+                    continue
+                rate = float(rate_resp[0]["fundingRate"])
+
+                info_resp: Dict[str, Any] = session.get(
+                    f"{BINANCE_REST_BASE}/fapi/v1/fundingInfo",
+                    params={"symbol": symbol},
+                    timeout=10,
+                ).json()
+                cap = float(info_resp.get("fundingRateCap", 0))
+                floor = float(info_resp.get("fundingRateFloor", 0))
+                net_edge = compute_net_edge(rate, cap, floor)
+                interval_ms = int(info_resp.get("fundingInterval", 0))
+                print(
+                    f"{symbol} fundingRate={rate} netEdge={net_edge} interval={interval_ms}ms"
+                )
+            time.sleep(interval)
+            backoff = 1  # reset after successful poll
+        except Exception as exc:  # pragma: no cover - network failures
+            print("REST polling error", exc)
+            time.sleep(backoff)
+            backoff = min(backoff * 2, 60)  # exponential backoff
