@@ -83,6 +83,15 @@ def run_wfo(
         Number of folds.
     embargo_pct : float, optional
         Fraction of observations to embargo around each test fold.
+
+    Returns
+    -------
+    list of dict
+        Each dict contains metrics for a fold with the following keys:
+        - "fold": float, fold number
+        - "sharpe": float, Sharpe ratio
+        - "maxdd": float, maximum drawdown
+        - "variance": float, return variance
     """
 
     rows = list(data)
