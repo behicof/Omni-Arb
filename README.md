@@ -32,6 +32,7 @@ omni-arb/
 │   └── test_smoke.py           # تست Smoke برای بررسی عملکرد اولیه
 ├── Makefile                    # دستورات ساخت و اجرا
 ├── pyproject.toml              # تنظیمات Poetry برای مدیریت وابستگی‌ها
+├── funding.py                 # محاسبه NetEdge بر اساس نرخ‌های Funding Binance
 └── README.md                   # این فایل راهنما
 ```
 
