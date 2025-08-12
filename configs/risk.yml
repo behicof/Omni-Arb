@@ -1,0 +1,5 @@
+exchanges:
+  - BINANCE
+  - OKX
+live: 0
+log_level: INFO
