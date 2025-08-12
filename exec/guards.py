@@ -59,4 +59,8 @@ class GuardChecker:
             with open(self.log_path, "a", encoding="utf-8") as fh:
                 fh.write(json.dumps(entry) + "\n")
         except (OSError, IOError) as e:
-            print(f"Failed to write trade log to {self.log_path}: {e}")
+        try:
+            with open("trade_audit.log", "a", encoding="utf-8") as fh:
+                fh.write(json.dumps(entry) + "\n")
+        except (OSError, IOError) as e:
+            print(f"Failed to write trade log to trade_audit.log: {e}")
