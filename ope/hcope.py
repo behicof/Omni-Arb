@@ -32,8 +32,12 @@ def lower_confidence_bound(
     """
     if not (len(rewards) == len(behavior_probs) == len(target_probs)):
         raise ValueError("All input sequences must have the same length")
+    if not rewards:
+        raise ValueError("Input sequences must not be empty")
     if any(b == 0 for b in behavior_probs):
         raise ValueError("behavior_probs contains zero, cannot divide")
+    if not (0 < delta < 1):
+        raise ValueError("delta must be between 0 and 1")
 
     weighted_rewards = [r * (t / b) for r, b, t in zip(rewards, behavior_probs, target_probs)]
     estimate = sum(weighted_rewards) / len(weighted_rewards)
