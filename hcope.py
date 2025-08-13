@@ -21,6 +21,10 @@ def calculate_lcb(estimated_metric: float, estimated_std: float, confidence_leve
     Returns:
         The lower confidence bound of the metric.
     """
+    if estimated_std < 0:
+        raise ValueError("estimated_std must be non-negative")
+    if not (0 < confidence_level < 1):
+        raise ValueError("confidence_level must be between 0 and 1")
     z_score = norm.ppf(confidence_level)
     return estimated_metric - z_score * estimated_std
 
