@@ -26,8 +26,9 @@ omni-arb/
 ├── apps/
 │   ├── api.py                  # API پروژه با FastAPI
 │   └── dashboard.py            # داشبورد برای نمایش اطلاعات
-├── configs/
-│   └── settings.example.yaml   # فایل نمونه تنظیمات پروژه
+├── conf/
+│   ├── tune.yaml               # تنظیمات بهینه‌سازی
+│   └── exchanges.yaml          # تنظیمات احراز هویت صرافی‌ها
 ├── tests/
 │   └── test_smoke.py           # تست Smoke برای بررسی عملکرد اولیه
 ├── Makefile                    # دستورات ساخت و اجرا
@@ -55,17 +56,27 @@ omni-arb/
    poetry install
    ```
 
-3. اجرای API:
+3. تنظیم متغیرهای محیطی صرافی‌ها:
+   ```
+   export BINANCE_API_KEY=...
+   export BINANCE_API_SECRET=...
+   export OKX_API_KEY=...
+   export OKX_API_SECRET=...
+   export OKX_PASSPHRASE=...
+   ```
+   مقادیر فوق توسط فایل `conf/exchanges.yaml` خوانده می‌شوند.
+
+4. اجرای API:
    ```
    uvicorn apps.api:app --reload --port 8000
    ```
 
-4. اجرای داشبورد:
+5. اجرای داشبورد:
    ```
    python apps/dashboard.py
    ```
 
-5. اجرای تست Smoke:
+6. اجرای تست Smoke:
    ```
    pytest tests/test_smoke.py
    ```

@@ -1,0 +1,10 @@
+binance:
+  api_key: "${BINANCE_API_KEY}"
+  api_secret: "${BINANCE_API_SECRET}"
+  testnet: true  # برای تست
+
+okx:
+  api_key: "${OKX_API_KEY}"
+  api_secret: "${OKX_API_SECRET}"
+  passphrase: "${OKX_PASSPHRASE}"
+  testnet: false
